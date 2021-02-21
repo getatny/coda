@@ -1,0 +1,80 @@
+.coda-wrapper {
+    width: 100%;
+
+    .comment-box {
+        box-shadow: 5px 23px 26px 0 rgb(0 0 0 / 4%);
+        width: 100%;
+        position: relative;
+        height: 134px;
+
+        textarea {
+            width: 100%;
+            height: 94px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            border-left: 1px solid rgb(0 0 0 / 4%);
+            border-right: 1px solid rgb(0 0 0 / 4%);
+            border-top: 1px solid rgb(0 0 0 / 4%);
+            border-bottom: none;
+            resize: none;
+            padding: 15px;
+            letter-spacing: .8px;
+            color: #4A4E66;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .tool-bar {
+            width: 100%;
+            height: 40px;
+            background-color: #f9fafb;
+            border-left: 1px solid rgb(0 0 0 / 4%);
+            border-right: 1px solid rgb(0 0 0 / 4%);
+            border-bottom: 1px solid rgb(0 0 0 / 4%);
+            border-top: none;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            box-sizing: border-box;
+            position: absolute;
+            top: 94px;
+            overflow: hidden;
+            display: flex;
+
+            .operate-menus {
+                flex: 1;
+            }
+
+            .submit-button {
+                height: 40px;
+                padding: 0 20px;
+                background-color: #5bb7ed;
+                color: #fff;
+                line-height: 40px;
+                border: none;
+                cursor: pointer;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+
+    .comment-content {
+        width: 100%;
+        padding: 30px 15px 0;
+        box-sizing: border-box;
+
+        .comment-num {
+            color: #2B3052;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+    }
+}

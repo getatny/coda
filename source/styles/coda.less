@@ -9,7 +9,7 @@
 @shadow-border: 1px solid rgb(0 0 0 / 4%);
 
 // iconfont
-@import "//at.alicdn.com/t/font_2380876_ln6f6xfwyoj.css";
+@import "//at.alicdn.com/t/font_2380876_2auoxs1hiol.css";
 
 .coda-wrapper {
     width: 100%;
@@ -36,6 +36,7 @@
             box-sizing: border-box;
             position: absolute;
             top: 0;
+            background-color: #fff;
 
             &:focus {
                 outline: none;
@@ -155,9 +156,20 @@
                             cursor: help;
                         }
 
+                        .author {
+                            margin-right: 5px;
+                            display: flex;
+                            align-items: center;
+
+                            i {
+                                font-size: 1rem;
+                                color: #237804;
+                            }
+                        }
+
                         .nickname {
                             font-size: 1rem;
-                            margin-right: 5px;
+                            margin-right: 10px;
                             color: @emphasize;
                             display: inline;
                             font-weight: 800;
@@ -166,7 +178,7 @@
                         .comment-time {
                             display: inline;
                             color: @secondary;
-                            margin-right: 5px;
+                            margin-right: 10px;
                         }
                     }
                 }
@@ -221,13 +233,14 @@
     align-items: center;
     background-color: #fff;
     padding: 8px 12px;
+    z-index: 20;
 
     &.show {
-        animation: slideDown 1s linear forwards;
+        animation: slideDown .3s linear forwards;
     }
 
     &.hidden {
-        animation: slideUp 1s linear forwards;
+        animation: slideUp .5s linear forwards;
     }
 
     i {
@@ -252,6 +265,65 @@
     }
 }
 
+.coda-login-wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    z-index: 5;
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @supports((-webkit-backdrop-filter: blur(15px)) or (backdrop-filter: blur(15px))) {
+        background-color: rgba(255, 255, 255, .5);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+    }
+
+    &.hidden {
+        animation: fadeOut .3s forwards ease-in;
+    }
+
+    &.show {
+        animation: fadeIn .3s forwards ease-in;
+    }
+
+    .close-button {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        cursor: pointer;
+
+        i {
+            font-size: 1.7rem;
+        }
+    }
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: @shadow;
+        margin-bottom: 30px;
+
+        img {
+            width: 70px;
+            height: 70px;
+        }
+    }
+
+    .basic-infos {
+        margin-bottom: 30px;
+    }
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -263,7 +335,7 @@
 
 @keyframes slideDown {
     from {
-        top: -400px;
+        top: -100px;
     }
     to {
         top: 20px;
@@ -275,6 +347,28 @@
         top: 20px;
     }
     to {
-        top: -400px;
+        top: -100px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        pointer-events: none;
+    }
+    to {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    to {
+        opacity: 0;
+        pointer-events: none;
     }
 }

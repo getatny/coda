@@ -104,7 +104,7 @@ class CodaBase {
                     </div>
                     <div class="infos-bar">
                         <div class="pending-approval" title="评论审核中，仅您可见"></div>
-                        ${this.authors.includes('wangmaozhu@foxmail.com') ? '<div class="author"></div>' : ''}
+                        ${this.authors.includes('a') ? '<div class="author" title="作者"><i class="iconfont icon-verify"></i></div>' : ''}
                         <div class="nickname">Matt</div>
                         <div class="comment-time">1天前</div>
                         <div class="operations"></div>
@@ -149,7 +149,7 @@ const Coda = (options) => {
         avatarMirror: 'https://gravatar.loli.net/avatar',
         defaultAvatar: 'mm',
         pageSize: 10,
-        authors: [],
+        authors: ['a'],
         ...options,
     };
 

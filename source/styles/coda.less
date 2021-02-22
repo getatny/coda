@@ -1,8 +1,21 @@
+@emphasize: #2B3052;
+@content: #4A4E66;
+@secondary: #A7AAB9;
+@secondary-lighter: #f4f4f4;
+
+@lighter-shadow: 0 7px 20px 0 fadeout(#000, 96%);
+@shadow: 5px 23px 26px 0 rgb(0 0 0 / 10%);
+
+@shadow-border: 1px solid rgb(0 0 0 / 4%);
+
+// iconfont
+@import "//at.alicdn.com/t/font_2380876_ln6f6xfwyoj.css";
+
 .coda-wrapper {
     width: 100%;
 
     .comment-box {
-        box-shadow: 5px 23px 26px 0 rgb(0 0 0 / 4%);
+        box-shadow: @lighter-shadow;
         width: 100%;
         position: relative;
         height: 134px;
@@ -12,14 +25,14 @@
             height: 94px;
             border-top-left-radius: 6px;
             border-top-right-radius: 6px;
-            border-left: 1px solid rgb(0 0 0 / 4%);
-            border-right: 1px solid rgb(0 0 0 / 4%);
-            border-top: 1px solid rgb(0 0 0 / 4%);
+            border-left: @shadow-border;
+            border-right: @shadow-border;
+            border-top: @shadow-border;
             border-bottom: none;
             resize: none;
             padding: 15px;
             letter-spacing: .8px;
-            color: #4A4E66;
+            color: @content;
             box-sizing: border-box;
             position: absolute;
             top: 0;
@@ -33,9 +46,9 @@
             width: 100%;
             height: 40px;
             background-color: #f9fafb;
-            border-left: 1px solid rgb(0 0 0 / 4%);
-            border-right: 1px solid rgb(0 0 0 / 4%);
-            border-bottom: 1px solid rgb(0 0 0 / 4%);
+            border-left: @shadow-border;
+            border-right: @shadow-border;
+            border-bottom: @shadow-border;
             border-top: none;
             border-bottom-left-radius: 6px;
             border-bottom-right-radius: 6px;
@@ -47,6 +60,15 @@
 
             .operate-menus {
                 flex: 1;
+                display: flex;
+                padding: 0 10px;
+                align-items: center;
+
+                .iconfont {
+                    font-size: 22px;
+                    color: @content;
+                    margin-right: 5px;
+                }
             }
 
             .submit-button {
@@ -67,14 +89,192 @@
 
     .comment-content {
         width: 100%;
-        padding: 30px 15px 0;
+        padding: 40px 15px 0;
         box-sizing: border-box;
 
         .comment-num {
-            color: #2B3052;
+            color: @emphasize;
             font-size: 1.1rem;
             font-weight: 800;
             margin-bottom: 30px;
         }
+
+        .comment-list {
+            width: 100%;
+            position: relative;
+
+            .comment {
+                position: relative;
+                margin-bottom: 25px;
+
+                .left {
+                    position: absolute;
+                    bottom: 0;
+                }
+
+                .avatar {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+
+                    img {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                    }
+                }
+
+                .right {
+                    margin-left: 65px;
+                    width: calc(100% - 65px);
+
+                    .content {
+                        width: max-content;
+                        max-width: 100%;
+                        box-sizing: border-box;
+                        padding: 15px 20px;
+                        background-color: @secondary-lighter;
+                        border-radius: 5px 5px 5px 0;
+                        margin-bottom: 5px;
+                        line-height: 1.5;
+                    }
+
+                    .infos-bar {
+                        width: 100%;
+                        font-size: 0.875rem;
+                        box-sizing: border-box;
+                        display: flex;
+                        align-items: center;
+
+                        .pending-approval {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background-color: chocolate;
+                            margin-right: 5px;
+                            cursor: help;
+                        }
+
+                        .nickname {
+                            font-size: 1rem;
+                            margin-right: 5px;
+                            color: @emphasize;
+                            display: inline;
+                            font-weight: 800;
+                        }
+
+                        .comment-time {
+                            display: inline;
+                            color: @secondary;
+                            margin-right: 5px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.loading {
+        .comment-box {
+            display: none;
+        }
+
+        .comment-content {
+            display: none;
+        }
+
+        .loading-indicator {
+            display: flex;
+        }
+    }
+
+    .loading-indicator {
+        display: none;
+        width: 100%;
+        padding: 40px 0;
+        font-size: 1.5rem;
+        color: @secondary;
+        justify-content: center;
+        align-items: center;
+        background-color: @secondary-lighter;
+        border-radius: 5px;
+
+        .iconfont {
+            display: inline-block;
+            animation: spin 1s infinite linear;
+            font-size: 2.5rem;
+            margin-right: 10px;
+        }
+    }
+}
+
+.coda-message {
+    width: max-content;
+    box-shadow: @lighter-shadow;
+    border-radius: 4px;
+    border-left: @shadow-border;
+    position: fixed;
+    top: -400px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+
+    &.show {
+        animation: slideDown 1s linear forwards;
+    }
+
+    &.hidden {
+        animation: slideUp 1s linear forwards;
+    }
+
+    i {
+        font-size: 24px;
+        margin-right: 8px;
+
+        &.icon-success {
+            color: #52c41a;
+        }
+
+        &.icon-warning {
+            color: #faad14;
+        }
+
+        &.icon-error {
+            color: #ff4d4f;
+        }
+    }
+
+    .content {
+        flex: 1;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        top: -400px;
+    }
+    to {
+        top: 20px;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        top: 20px;
+    }
+    to {
+        top: -400px;
     }
 }

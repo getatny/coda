@@ -2,6 +2,9 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const config = {
+    optimization: {
+        minimize: false,
+    },
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         compress: true,

@@ -64,15 +64,19 @@ export default class Reviewer {
                 </div>
                 <div class="basic-infos">
                     <div class="info-item">
-                        <input type="text" />
+                        <label for="email">邮箱 <span>*</span></label>
+                        <input type="text" id="email" placeholder="lq@wxample.com" />
                     </div>
                     <div class="info-item">
-                        <input type="text" />
+                        <label for="nickname">昵称 <span>*</span></label>
+                        <input type="text" id="nickname" placeholder="Your name" />
                     </div>
                     <div class="info-item">
-                        <input type="text" />
+                        <label for="website">网址</label>
+                        <input type="text" id="website" placeholder="https://" />
                     </div>
                 </div>
+                <button class="login-button">提交</button>
             `;
 
             document.body.appendChild(codaLoginWrapper);
@@ -95,10 +99,26 @@ export default class Reviewer {
             document.querySelector('.coda-login-wrapper').classList.remove('show');
             document.querySelector('.coda-login-wrapper').classList.add('hidden');
         });
+
+        document.querySelector('.coda-login-wrapper .login-button').addEventListener('click', this.verifyReviewer);
     }
 
     disableCommentBox = () => {
         const mainElement = getCodaObjectFromWindow(this.codaUniqKey)?.main;
         mainElement.querySelector('.comment-box textarea').setAttribute('disabled', 'true');
+    }
+
+    verifyReviewer = () => {
+        const values = Array.from(document.querySelectorAll('.coda-login-wrapper .basic-infos .info-item input')).map((el: any) => el.value);
+
+        if (values[0] === '' || values[1] === '') {
+            Message.error('请完善必填项');
+        } else if (!(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(values[0]))) {
+            Message.error('请填写正确的邮箱');
+        }
+
+        if (values[2] !== '' && !/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(values[2])) {
+            Message.error('请填写正确的网址');
+        }
     }
 }

@@ -8,6 +8,8 @@ export default class Message {
 
     static mainElement = null;
 
+    static timer = null;
+
     static show = ({ type, message }: {
         type: 'success' | 'error' | 'warning';
         message: string;
@@ -24,7 +26,11 @@ export default class Message {
             Message.showMessage();
         }
 
-        setTimeout(() => {
+        if (Message.timer) {
+            clearTimeout(Message.timer);
+        }
+
+        Message.timer = setTimeout(() => {
             Message.hideMessage();
         }, 5000);
     }
@@ -38,7 +44,8 @@ export default class Message {
     }
 
     static rerenderMessage = (type, message) => {
-        Message.mainElement.innerHTML = Message.mainElement.innerHTML.replace('%messageContent%', message).replace('%iconType%', `icon-${type}`);
+        Message.mainElement.children[0].className = `iconfont icon-${type}`;
+        Message.mainElement.children[1].innerText = message;
     }
 
     static success = (message) => {

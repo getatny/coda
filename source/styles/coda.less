@@ -281,7 +281,7 @@
     flex-direction: column;
 
     @supports((-webkit-backdrop-filter: blur(15px)) or (backdrop-filter: blur(15px))) {
-        background-color: rgba(255, 255, 255, .5);
+        background-color: rgba(212, 212, 212, .45);
         backdrop-filter: blur(15px);
         -webkit-backdrop-filter: blur(15px);
     }
@@ -320,7 +320,59 @@
     }
 
     .basic-infos {
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+
+        .info-item {
+            width: 280px;
+            padding: 8px 16px;
+            background-color: #fff;
+            border: 1px solid @shadow-border;
+            margin-bottom: 10px;
+            border-radius: 6px;
+
+            label {
+                width: 100%;
+                color: @secondary;
+                font-size: .8rem;
+
+                span {
+                    color: #cf1322;
+                }
+            }
+
+            input {
+                width: 100%;
+                border: none;
+                box-sizing: border-box;
+                padding: 5px 0;
+                color: @content;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &::placeholder {
+                    color: @secondary;
+                }
+            }
+        }
+    }
+
+    button.login-button {
+        border: none;
+        width: 100px;
+        padding: 10px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #40a9ff;
+        color: #fff;
+        border-radius: 20px;
+        cursor: pointer;
+
+        &:focus {
+            outline: none;
+        }
     }
 }
 

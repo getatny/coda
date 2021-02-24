@@ -1,0 +1,6 @@
+{
+  "development": {
+    "storage": "db/coda.sqlite",
+    "dialect": "sqlite"
+  }
+}

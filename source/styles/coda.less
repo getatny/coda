@@ -181,6 +181,28 @@
                             color: @secondary;
                             margin-right: 10px;
                         }
+
+                        .operations {
+                            opacity: 0;
+                            pointer-events: none;
+                            transition: opacity .35s ease-in;
+
+                            a {
+                                background-color: transparent;
+                                border: none;
+                                color: @secondary;
+                                cursor: pointer;
+                            }
+                        }
+                    }
+
+                    &:hover {
+                        .infos-bar {
+                            .operations {
+                                opacity: 1;
+                                pointer-events: auto;
+                            }
+                        }
                     }
                 }
             }

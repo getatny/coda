@@ -102,7 +102,10 @@ class CodaBase {
             (res.response.comments as CodaComment[]).forEach((item) => commentElements.push(`
                 <div class="comment">
                     <div class="left avatar">
-                        <img src="${this.avatarMirror}/${md5(item.email)}?d=${encodeURIComponent(this.defaultAvatar)}" alt="${this.reviewer.nickname}-avatar">
+                        <img 
+                            src="${this.avatarMirror}/${md5(item.email)}?d=${encodeURIComponent(this.defaultAvatar)}" 
+                            alt="${this.reviewer.nickname}-avatar" 
+                        />
                     </div>
                     <div class="right">
                         <div class="content">
@@ -113,14 +116,17 @@ class CodaBase {
                             ${this.authors.includes(item.email) ? '<div class="author" title="作者"><i class="iconfont icon-verify"></i></div>' : ''}
                             <div class="nickname">${item.nickname}</div>
                             <div class="comment-time">${format(Date.parse(item.createdAt), 'zh_CN')}</div>
-                            <div class="operations"></div>
+                            <div class="operations">
+                                <a class="reply-to" data-comment-id="${item.id}" data-reply-to="${item.nickname}">回复</a>
+                                ${item.parentId ? `<a class="conversation" data-parent-id="${item.parentId}">查看对话</a>` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
             `));
 
-            const commentsCout = this.mainElement.querySelector('.comment-num');
-            commentsCout.innerHTML = commentsCout.innerHTML.replace('%comment-num%', res.response.count);
+            const commentsCount = this.mainElement.querySelector('.comment-num');
+            commentsCount.innerHTML = commentsCount.innerHTML.replace('%comment-num%', res.response.count);
             this.mainElement.querySelector('.comment-list').innerHTML = commentElements.join('');
         });
     }

@@ -13,4 +13,6 @@ export interface CodaComment {
     content: string;
     status?: CommentStatus;
     notify?: boolean;
+    postId: string;
+    createdAt: string;
 }

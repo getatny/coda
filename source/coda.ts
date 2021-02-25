@@ -1,9 +1,12 @@
+import { format } from 'timeago.js';
+
 import { CodaOptions } from './typings/coda';
 import Controller from './controller';
 import Reviewer from './reviewer';
+import { bindObjectToWindow } from './utils/commons';
 
 import './styles/coda.less';
-import { bindObjectToWindow } from './utils';
+import { CodaComment } from '../service/controllers/typings/comment';
 
 const md5 = require('js-md5');
 
@@ -51,9 +54,6 @@ class CodaBase {
             url: options.url,
         });
 
-        // render comment list
-        // this.generateCommentElement();
-
         // init reviewer
         const reviewerCache = JSON.parse(localStorage.getItem('coda-reivewer-infos'));
         this.reviewer = new Reviewer({
@@ -62,6 +62,9 @@ class CodaBase {
             defaultAvatar: options.defaultAvatar,
             ...reviewerCache || {},
         });
+
+        // render comment list
+        this.generateCommentElement();
 
         bindObjectToWindow(this.uniqKey, 'controller', this.controller);
         bindObjectToWindow(this.uniqKey, 'reviewer', this.reviewer);
@@ -93,42 +96,33 @@ class CodaBase {
     }
 
     generateCommentElement = () => {
-        this.mainElement.querySelector('.comment-list').innerHTML = `
-            <div class="comment">
-                <div class="left avatar">
-                    <img src="${this.avatarMirror}/${md5('wangmaozhu@foxmail.com')}?d=${encodeURIComponent(this.defaultAvatar)}" alt="Matt-avatar">
-                </div>
-                <div class="right">
-                    <div class="content">
-                        123
+        const commentElements = [];
+
+        this.controller.getComments(this.reviewer.email).then((res) => {
+            (res.response.comments as CodaComment[]).forEach((item) => commentElements.push(`
+                <div class="comment">
+                    <div class="left avatar">
+                        <img src="${this.avatarMirror}/${md5(item.email)}?d=${encodeURIComponent(this.defaultAvatar)}" alt="${this.reviewer.nickname}-avatar">
                     </div>
-                    <div class="infos-bar">
-                        <div class="pending-approval" title="评论审核中，仅您可见"></div>
-                        ${this.authors.includes('a') ? '<div class="author" title="作者"><i class="iconfont icon-verify"></i></div>' : ''}
-                        <div class="nickname">Matt</div>
-                        <div class="comment-time">1天前</div>
-                        <div class="operations"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="comment">
-                <div class="left avatar">
-                    <img src="${this.avatarMirror}/${md5('wangmaozhu@foxmail.com')}?d=${encodeURIComponent(this.defaultAvatar)}" alt="Matt-avatar">
-                </div>
-                <div class="right">
-                    <div class="content">
-                        服务标准化服务标准化服务标准化服务标准化服务标准化服务标准化服务标准化服务标准化服务标准化服务标准化
-                    </div>
-                    <div class="infos-bar">
-                        <div class="pending-approval" title="评论审核中，仅您可见"></div>
-                        ${this.authors.includes('wangmaozhu@foxmail.com') ? '<div class="author"></div>' : ''}
-                        <div class="nickname">Matt</div>
-                        <div class="comment-time">1天前</div>
-                        <div class="operations"></div>
+                    <div class="right">
+                        <div class="content">
+                            ${item.content}
+                        </div>
+                        <div class="infos-bar">
+                            ${item.status === 0 ? '<div class="pending-approval" title="评论审核中，仅您可见"></div>' : ''}
+                            ${this.authors.includes(item.email) ? '<div class="author" title="作者"><i class="iconfont icon-verify"></i></div>' : ''}
+                            <div class="nickname">${item.nickname}</div>
+                            <div class="comment-time">${format(Date.parse(item.createdAt), 'zh_CN')}</div>
+                            <div class="operations"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `));
+
+            const commentsCout = this.mainElement.querySelector('.comment-num');
+            commentsCout.innerHTML = commentsCout.innerHTML.replace('%comment-num%', res.response.count);
+            this.mainElement.querySelector('.comment-list').innerHTML = commentElements.join('');
+        });
     }
 
     unloading = () => {

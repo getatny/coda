@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import config from './utils/config';
 import responseHandler from './middlewares/responseHandler';
 import authErrorHandler from './middlewares/authErrorHandler';
+import publicApi from './routers/public';
 
 const app = new Koa();
 
@@ -42,6 +43,8 @@ app.use(json({ pretty: false, param: 'pretty' }));
 
 app.use(responseHandler());
 app.use(authErrorHandler);
+
+app.use(publicApi.middleware());
 
 app.listen(config.getConfig('port'), () => {
     // eslint-disable-next-line no-console

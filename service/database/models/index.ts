@@ -16,11 +16,15 @@ if (config.user_env_variable) {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-const CodaComment = initCommentModel(sequelize);
-const Post = initPostModel(sequelize);
-initUserModel(sequelize);
+const CodaComment: any = initCommentModel(sequelize);
+const Post: any = initPostModel(sequelize);
+const User: any = initUserModel(sequelize);
 
 // 关联
 Post.comments = Post.hasMany(CodaComment);
 
-export default sequelize;
+export {
+    CodaComment,
+    Post,
+    User,
+};

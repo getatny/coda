@@ -1,6 +1,6 @@
 {
   "port": 4444,
   "api": {
-    "whiteList": ["localhost"]
+    "whiteList": "localhost:9000"
   }
 }

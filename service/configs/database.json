@@ -1,6 +1,6 @@
 {
   "development": {
-    "storage": "db/coda.sqlite",
+    "storage": "service/database/coda.sqlite",
     "dialect": "sqlite"
   }
 }

@@ -1,5 +1,6 @@
 const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 // Webpack Development Configuration
 const config = {
@@ -23,6 +24,9 @@ const config = {
             }),
         ],
     },
+    plugins: [
+        new CleanWebpackPlugin(),
+    ],
 };
 
 module.exports = config;

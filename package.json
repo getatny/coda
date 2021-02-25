@@ -56,7 +56,9 @@
     "start": "webpack serve",
     "analyze": "webpack --analyze",
     "service-dev": "cross-env NODE_ENV=development nodemon --watch './service/**/*' -e ts --exec ts-node --project ./service/tsconfig.service.json ./service/app.ts",
-    "service-build": "tsc -p ./service/tsconfig.service.json"
+    "service-build": "tsc -p ./service/tsconfig.service.json",
+    "migrate": "sequelize-cli db:migrate && sequelize-cli db:seed:all",
+    "undo-migrate": "sequelize-cli db:migrate:undo:all"
   },
   "version": "0.0.1",
   "dependencies": {
@@ -76,6 +78,7 @@
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
     "sqlite3": "^5.0.2",
-    "timeago.js": "^4.0.2"
+    "timeago.js": "^4.0.2",
+    "uuid4": "^2.0.2"
   }
 }

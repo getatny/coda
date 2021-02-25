@@ -1,5 +1,5 @@
 import { ReviewerOptions } from './typings/reviewer';
-import { getCodaObjectFromWindow } from './utils';
+import { getCodaObjectFromWindow } from './utils/commons';
 import Message from './message';
 
 const md5 = require('js-md5');

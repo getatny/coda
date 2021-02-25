@@ -4,7 +4,7 @@ class Post extends Model {}
 
 export default (sequelize) => {
     Post.init({
-        key: {
+        id: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,

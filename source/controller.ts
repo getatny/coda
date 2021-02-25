@@ -1,3 +1,4 @@
+import * as http from './utils/http';
 import { ControllerOptions } from './typings/controller';
 
 const md5 = require('js-md5');
@@ -29,4 +30,6 @@ export default class Controller {
         const server = Array.from(document.scripts).find((item) => item.src.indexOf('coda.js') > -1).src.match(/http[s]?:\/\/(\S*)\//)[1];
         return `${schema}://${server}`;
     }
+
+    getComments = (email: string) => http.get(`${this.serviceUrl}/rest/public/comments/${this.key}/${this.currentPage}/${this.pageSize}${email ? `/${email}` : ''}`)
 }

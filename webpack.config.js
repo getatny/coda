@@ -1,7 +1,6 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const prod = process.argv.indexOf('-p') !== -1 || process.env.NODE_ENV === 'production';
 const ENV_CONF = prod ? require('./webpack.config.prod') : require('./webpack.config.dev');
@@ -69,7 +68,6 @@ const config = {
         extensions: ['*', '.js', '.ts'],
     },
     plugins: [
-        new CleanWebpackPlugin(),
         new MiniCSSExtractPlugin({
             filename: 'styles/[name].css',
             chunkFilename: 'styles/[id].css',

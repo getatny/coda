@@ -1,26 +1,21 @@
-import { format } from 'timeago.js';
-
 import { CodaOptions } from './typings/coda';
 import Controller from './controller';
 import Reviewer from './reviewer';
-import { bindObjectToWindow } from './utils/commons';
+import {
+    storeValueToWindow,
+    getCodaObjectFromWindow, getReviewerInfos,
+} from './utils/commons';
+import Comment from './comment';
 
 import './styles/coda.less';
-import { CodaComment } from '../service/controllers/typings/comment';
-
-const md5 = require('js-md5');
 
 class CodaBase {
     constructor(options: CodaOptions) {
         const element = document.querySelector(options.selector);
 
         if (element) {
-            this.mainElement = element;
-            this.avatarMirror = options.avatarMirror;
-            this.defaultAvatar = options.defaultAvatar;
-            this.authors = options.authors;
-            this.uniqKey = md5((Math.random() * 10000 * 2).toString(16));
-            bindObjectToWindow(this.uniqKey, 'main', this.mainElement);
+            storeValueToWindow('main', element);
+            storeValueToWindow('configs', options);
 
             this.init(options);
         } else {
@@ -28,21 +23,11 @@ class CodaBase {
         }
     }
 
-    mainElement: Element;
-
     controller: Controller;
 
     reviewer: Reviewer;
 
-    avatarMirror: string;
-
-    defaultAvatar: string;
-
-    authors: string[];
-
-    uniqKey: string;
-
-    init = (options: CodaOptions) => {
+    init = async (options: CodaOptions) => {
         // render comment box
         this.generateCommentBox();
 
@@ -52,33 +37,32 @@ class CodaBase {
             title: options.title,
             pageSize: options.pageSize,
             url: options.url,
+            serviceUrl: options.serviceUrl,
         });
 
         // init reviewer
-        const reviewerCache = JSON.parse(localStorage.getItem('coda-reivewer-infos'));
-        this.reviewer = new Reviewer({
-            uniqKey: this.uniqKey,
-            avatarMirror: options.avatarMirror,
-            defaultAvatar: options.defaultAvatar,
-            ...reviewerCache || {},
-        });
+        const reviewerCache = getReviewerInfos();
+        this.reviewer = new Reviewer(reviewerCache || {});
+
+        storeValueToWindow('controller', this.controller);
+        storeValueToWindow('reviewer', this.reviewer);
 
         // render comment list
-        this.generateCommentElement();
-
-        bindObjectToWindow(this.uniqKey, 'controller', this.controller);
-        bindObjectToWindow(this.uniqKey, 'reviewer', this.reviewer);
+        await this.generateCommentElement();
 
         this.unloading();
     }
 
     generateCommentBox = () => {
-        this.mainElement.innerHTML = `
+        const mainElement = getCodaObjectFromWindow().main;
+
+        mainElement.innerHTML = `
             <div class="coda-wrapper loading">
                 <div class="comment-box">
                     <textarea></textarea>
                     <div class="tool-bar">
                         <div class="operate-menus"></div>
+                        <button class="cancel-reply">取消回复</button>
                         <button class="submit-button">提交</button>
                     </div>
                 </div>
@@ -95,48 +79,31 @@ class CodaBase {
         `;
     }
 
-    generateCommentElement = () => {
+    generateCommentElement = async () => {
+        const mainElement = getCodaObjectFromWindow().main;
         const commentElements = [];
 
-        this.controller.getComments(this.reviewer.email).then((res) => {
-            (res.response.comments as CodaComment[]).forEach((item) => commentElements.push(`
-                <div class="comment">
-                    <div class="left avatar">
-                        <img 
-                            src="${this.avatarMirror}/${md5(item.email)}?d=${encodeURIComponent(this.defaultAvatar)}" 
-                            alt="${this.reviewer.nickname}-avatar" 
-                        />
-                    </div>
-                    <div class="right">
-                        <div class="content">
-                            ${item.content}
-                        </div>
-                        <div class="infos-bar">
-                            ${item.status === 0 ? '<div class="pending-approval" title="评论审核中，仅您可见"></div>' : ''}
-                            ${this.authors.includes(item.email) ? '<div class="author" title="作者"><i class="iconfont icon-verify"></i></div>' : ''}
-                            <div class="nickname">${item.nickname}</div>
-                            <div class="comment-time">${format(Date.parse(item.createdAt), 'zh_CN')}</div>
-                            <div class="operations">
-                                <a class="reply-to" data-comment-id="${item.id}" data-reply-to="${item.nickname}">回复</a>
-                                ${item.parentId ? `<a class="conversation" data-parent-id="${item.parentId}">查看对话</a>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `));
+        const res = await this.controller.getComments(this.reviewer.email);
 
-            const commentsCount = this.mainElement.querySelector('.comment-num');
-            commentsCount.innerHTML = commentsCount.innerHTML.replace('%comment-num%', res.response.count);
-            this.mainElement.querySelector('.comment-list').innerHTML = commentElements.join('');
+        (res.response.comments as Comment[]).forEach((item) => {
+            const comment = new Comment(item);
+
+            commentElements.push(comment.getTemplate());
         });
+
+        const commentsCount = mainElement.querySelector('.comment-num');
+        commentsCount.innerHTML = commentsCount.innerHTML.replace('%comment-num%', res.response.count);
+        mainElement.querySelector('.comment-list').innerHTML = commentElements.join('');
     }
 
     unloading = () => {
-        this.mainElement.querySelector('.coda-wrapper').classList.remove('loading');
+        const mainElement = getCodaObjectFromWindow().main;
+        mainElement.querySelector('.coda-wrapper').classList.remove('loading');
     }
 
     loading = () => {
-        this.mainElement.querySelector('.coda-wrapper').classList.add('loading');
+        const mainElement = getCodaObjectFromWindow().main;
+        mainElement.querySelector('.coda-wrapper').classList.add('loading');
     }
 }
 
@@ -149,7 +116,6 @@ const Coda = (options) => {
         avatarMirror: 'https://gravatar.loli.net/avatar',
         defaultAvatar: 'mm',
         pageSize: 10,
-        authors: ['a'],
         ...options,
     };
 

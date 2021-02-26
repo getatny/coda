@@ -3,4 +3,5 @@ export type ControllerOptions = {
     title: string;
     url: string;
     pageSize: number;
+    serviceUrl?: string;
 }

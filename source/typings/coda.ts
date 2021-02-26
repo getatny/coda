@@ -6,5 +6,5 @@ export type CodaOptions = {
     avatarMirror: string;
     defaultAvatar: string;
     pageSize: number;
-    authors: string[];
+    serviceUrl?: string;
 }

@@ -72,6 +72,22 @@
                 }
             }
 
+            .cancel-reply {
+                display: none;
+                border: none;
+                cursor: pointer;
+                margin: 0;
+                height: 40px;
+                padding: 0 20px;
+                background-color: transparent;
+                color: @content;
+                line-height: 40px;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+
             .submit-button {
                 height: 40px;
                 padding: 0 20px;
@@ -108,6 +124,10 @@
             .comment {
                 position: relative;
                 margin-bottom: 25px;
+
+                .comment-block {
+                    position: relative;
+                }
 
                 .left {
                     position: absolute;
@@ -203,6 +223,20 @@
                                 pointer-events: auto;
                             }
                         }
+                    }
+                }
+
+                .comment-box-placeholder {
+                    padding-top: 15px;
+                    margin-left: 65px;
+                    width: calc(100% - 65px);
+
+                    .cancel-reply {
+                        display: inline;
+                    }
+
+                    &:empty {
+                        padding-top: 0;
                     }
                 }
             }

@@ -1,5 +1,5 @@
 import { ReviewerOptions } from './typings/reviewer';
-import { getCodaObjectFromWindow } from './utils/commons';
+import { getCodaObjectFromWindow, storeReviewerInfos } from './utils/commons';
 import Message from './message';
 
 const md5 = require('js-md5');
@@ -9,9 +9,6 @@ export default class Reviewer {
         this.email = options.email || '';
         this.nickname = options.nickname || '';
         this.website = options.website || '';
-        this.avatarMirror = options.avatarMirror;
-        this.defaultAvatar = options.defaultAvatar;
-        this.codaUniqKey = options.uniqKey;
 
         this.init();
     }
@@ -22,24 +19,19 @@ export default class Reviewer {
 
     website: string;
 
-    avatarMirror: string; // avatar mirror link, based on gravatar
-
-    defaultAvatar: string;
-
-    codaUniqKey: string;
-
     init = () => {
         if (this.email) {
             this.renderReviewerProfile();
         } else {
             this.disableCommentBox();
             this.renderReviewerLoginBox();
-            this.bindLoginEvent();
         }
+
+        this.bindReviewerEvent();
     }
 
     renderReviewerProfile = () => {
-        const mainElement = getCodaObjectFromWindow(this.codaUniqKey)?.main;
+        const mainElement = getCodaObjectFromWindow()?.main;
 
         mainElement.querySelector('.operate-menus').innerHTML += `
             <div class="user-profile">
@@ -50,6 +42,7 @@ export default class Reviewer {
 
     renderReviewerLoginBox = () => {
         const codaLogin = document.body.querySelector('.coda-login-wrapper');
+        const { avatarMirror, defaultAvatar } = getCodaObjectFromWindow()?.configs;
 
         if (!codaLogin) {
             const codaLoginWrapper = document.createElement('div');
@@ -60,7 +53,7 @@ export default class Reviewer {
                     <i class="iconfont icon-close"></i>
                 </div>
                 <div class="avatar">
-                    <img src="${this.avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(this.defaultAvatar)}" alt="${this.nickname}-avatar" />
+                    <img src="${avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(defaultAvatar)}" alt="${this.nickname}-avatar" width="70px" height="70px" />
                 </div>
                 <div class="basic-infos">
                     <div class="info-item">
@@ -83,42 +76,74 @@ export default class Reviewer {
         }
     }
 
-    bindLoginEvent = () => {
-        const mainElement: Element = getCodaObjectFromWindow(this.codaUniqKey)?.main;
+    bindReviewerEvent = () => {
+        const mainElement: Element = getCodaObjectFromWindow()?.main;
 
         mainElement.addEventListener('click', (e) => {
             const { target }: { target: any } = e;
 
-            if (['comment-box', 'operate-menus', 'tool-bar'].includes(target.parentNode.className) || target.className === 'reply-to') {
+            if (!this.email && (['comment-box', 'operate-menus', 'tool-bar'].includes(target.parentNode.className) || target.className === 'reply-to')) {
                 Message.error('您需要填写基本信息才能评论');
-                document.querySelector('.coda-login-wrapper').classList.add('show');
+                this.showLoginWindow();
             }
         });
 
-        document.querySelector('.coda-login-wrapper .close-button').addEventListener('click', () => {
-            document.querySelector('.coda-login-wrapper').classList.remove('show');
-            document.querySelector('.coda-login-wrapper').classList.add('hidden');
+        document.querySelector('.coda-login-wrapper')?.addEventListener('click', (e) => {
+            const { target }: { target: any } = e;
+
+            if (target.className === 'close-button') {
+                this.hideLoginWindow();
+            } else if (target.className === 'login-button') {
+                this.verifyAndStoreReviewer();
+            }
         });
 
-        document.querySelector('.coda-login-wrapper .login-button').addEventListener('click', this.verifyReviewer);
+        document.querySelector('.coda-login-wrapper .basic-infos .info-item input')?.addEventListener('blur', (e) => {
+            const email = (e.target as any).value;
+
+            if (!(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(email))) {
+                Message.error('请填写正确的邮箱');
+            } else {
+                this.email = email;
+                const { avatarMirror, defaultAvatar } = getCodaObjectFromWindow()?.configs;
+                (document.querySelector('.coda-login-wrapper .avatar img') as HTMLImageElement).src = `${avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(defaultAvatar)}`;
+            }
+        });
+    }
+
+    showLoginWindow = () => {
+        document.querySelector('.coda-login-wrapper').className = 'coda-login-wrapper show';
+    }
+
+    hideLoginWindow = () => {
+        document.querySelector('.coda-login-wrapper').className = 'coda-login-wrapper hidden';
     }
 
     disableCommentBox = () => {
-        const mainElement = getCodaObjectFromWindow(this.codaUniqKey)?.main;
+        const mainElement = getCodaObjectFromWindow()?.main;
         mainElement.querySelector('.comment-box textarea').setAttribute('disabled', 'true');
     }
 
-    verifyReviewer = () => {
-        const values = Array.from(document.querySelectorAll('.coda-login-wrapper .basic-infos .info-item input')).map((el: any) => el.value);
+    verifyAndStoreReviewer = () => {
+        const [email, nickname, website] = Array.from(document.querySelectorAll('.coda-login-wrapper .basic-infos .info-item input')).map((el: any) => el.value);
 
-        if (values[0] === '' || values[1] === '') {
+        if (email === '' || nickname === '') {
             Message.error('请完善必填项');
-        } else if (!(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(values[0]))) {
-            Message.error('请填写正确的邮箱');
+            return;
         }
 
-        if (values[2] !== '' && !/(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(values[2])) {
+        if (website !== '' && !/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(website)) {
             Message.error('请填写正确的网址');
+            return;
         }
+
+        // 校验通过
+        this.nickname = nickname;
+        this.website = website;
+
+        // 缓存用户数据
+        storeReviewerInfos({ email: this.email, nickname: this.nickname, website: this.website });
+        Message.success('已提交');
+        this.hideLoginWindow();
     }
 }

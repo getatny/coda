@@ -10,7 +10,7 @@ export default class Controller {
         this.key = md5(options.key);
         this.title = options.title;
         this.url = options.url;
-        this.serviceUrl = this.getServerPathByJSLink();
+        this.serviceUrl = options.serviceUrl || this.getServerPathByJSLink();
     }
 
     currentPage: number;
@@ -31,5 +31,5 @@ export default class Controller {
         return `${schema}://${server}`;
     }
 
-    getComments = (email: string) => http.get(`${this.serviceUrl}/rest/public/comments/${this.key}/${this.currentPage}/${this.pageSize}${email ? `/${email}` : ''}`)
+    getComments = (email: string) => http.get(`${this.serviceUrl}/rest/public/comments/${this.key}/${this.currentPage}/${this.pageSize}${email ? `?email=${email}` : ''}`)
 }

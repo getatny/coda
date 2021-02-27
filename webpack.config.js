@@ -58,6 +58,22 @@ const config = {
                 ],
             },
             {
+                test: /\.css/,
+                use: [
+                    MiniCSSExtractPlugin.loader,
+                    'css-loader',
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            sourceMap: true,
+                            postcssOptions: {
+                                config: path.resolve(__dirname, './postcss.config.js'),
+                            },
+                        },
+                    },
+                ],
+            },
+            {
                 test: /\.(jpg|png|gif|svg)$/,
                 type: 'asset/resource',
             },

@@ -913,6 +913,11 @@
   resolved "https://registry.npm.taobao.org/@polka/url/download/@polka/url-1.0.0-next.11.tgz#aeb16f50649a91af79dbe36574b66d0f9e4d9f71"
   integrity sha1-rrFvUGSaka952+NldLZtD55Nn3E=
 
+"@popperjs/core@^2.8.3":
+  version "2.8.6"
+  resolved "https://registry.npm.taobao.org/@popperjs/core/download/@popperjs/core-2.8.6.tgz#ad75ebe8dbecfa145af3c7e4d0ae98016458d005"
+  integrity sha1-rXXr6Nvs+hRa88fk0K6YAWRY0AU=
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.npm.taobao.org/@sindresorhus/is/download/@sindresorhus/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -8280,6 +8285,13 @@ timsort@^0.3.0:
   version "0.3.0"
   resolved "https://registry.npm.taobao.org/timsort/download/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
+
+tippy.js@^6.3.1:
+  version "6.3.1"
+  resolved "https://registry.npm.taobao.org/tippy.js/download/tippy.js-6.3.1.tgz#3788a007be7015eee0fd589a66b98fb3f8f10181"
+  integrity sha1-N4igB75wFe7g/ViaZrmPs/jxAYE=
+  dependencies:
+    "@popperjs/core" "^2.8.3"
 
 to-fast-properties@^1.0.3:
   version "1.0.3"

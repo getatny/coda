@@ -68,7 +68,9 @@ class CodaBase {
                 </div>
     
                 <div class="comment-content">
-                    <div class="comment-num">%comment-num% 条评论</div>
+                    <div class="comment-header">
+                        <div class="comment-num">%comment-num% 条评论</div>
+                    </div>
                     <div class="comment-list"></div>
                 </div>
                 

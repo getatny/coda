@@ -36,6 +36,8 @@ export const removeValueFromWindow = (key: string) => {
 
 export const getReviewerInfos = (): reviewerInfos => JSON.parse(localStorage.getItem('coda-reviewer-infos'));
 
+export const removeReviewerInfos = () => localStorage.removeItem('coda-reviewer-infos');
+
 export const storeReviewerInfos = (infos: reviewerInfos) => {
     localStorage.setItem('coda-reviewer-infos', JSON.stringify(infos));
 };

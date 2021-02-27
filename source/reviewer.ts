@@ -1,6 +1,7 @@
 import { ReviewerOptions } from './typings/reviewer';
-import { getCodaObjectFromWindow, storeReviewerInfos } from './utils/commons';
-import Message from './message';
+import { getCodaObjectFromWindow, removeReviewerInfos, storeReviewerInfos } from './utils/commons';
+import Message from './utils/message';
+import popover from './utils/popover';
 
 const md5 = require('js-md5');
 
@@ -20,11 +21,12 @@ export default class Reviewer {
     website: string;
 
     init = () => {
+        this.renderReviewerLoginBox();
+
         if (this.email) {
             this.renderReviewerProfile();
         } else {
             this.disableCommentBox();
-            this.renderReviewerLoginBox();
         }
 
         this.bindReviewerEvent();
@@ -32,12 +34,34 @@ export default class Reviewer {
 
     renderReviewerProfile = () => {
         const mainElement = getCodaObjectFromWindow()?.main;
+        const { avatarMirror, defaultAvatar } = getCodaObjectFromWindow()?.configs;
 
-        mainElement.querySelector('.operate-menus').innerHTML += `
-            <div class="user-profile">
-                <i class="iconfont icon-user"></i>
+        mainElement.querySelector('.comment-header').innerHTML += `
+            <div class="coda-popover-wrapper">
+                <div class="user-profile">
+                    <img src="${avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(defaultAvatar)}" alt="${this.nickname}-avatar" width="20px" height="20px" />
+                    ${this.nickname}
+                </div>
+                
+                <div class="popover-content user-profile-content">
+                    <img src="${avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(defaultAvatar)}" alt="${this.nickname}-avatar" width="20px" height="20px" />
+                    <div class="user-infos">
+                        <div class="email">${this.email}</div>
+                        <a class="logout">退出</a>
+                    </div>
+                </div>
             </div>
         `;
+
+        mainElement.querySelector('.comment-header .logout').addEventListener('click', () => {
+            removeReviewerInfos();
+            this.email = '';
+            this.nickname = '';
+            this.website = '';
+            this.afterLogout();
+        });
+
+        popover('.coda-popover-wrapper .user-profile');
     }
 
     renderReviewerLoginBox = () => {
@@ -91,7 +115,7 @@ export default class Reviewer {
         document.querySelector('.coda-login-wrapper')?.addEventListener('click', (e) => {
             const { target }: { target: any } = e;
 
-            if (target.className === 'close-button') {
+            if (target.offsetParent.className === 'close-button') {
                 this.hideLoginWindow();
             } else if (target.className === 'login-button') {
                 this.verifyAndStoreReviewer();
@@ -124,6 +148,24 @@ export default class Reviewer {
         mainElement.querySelector('.comment-box textarea').setAttribute('disabled', 'true');
     }
 
+    enableCommentBox = () => {
+        const mainElement = getCodaObjectFromWindow()?.main;
+        mainElement.querySelector('.comment-box textarea').setAttribute('disabled', 'false');
+    }
+
+    afterLogin = () => {
+        this.enableCommentBox();
+        this.renderReviewerProfile();
+        this.hideLoginWindow();
+    }
+
+    afterLogout = () => {
+        const mainElement: Element = getCodaObjectFromWindow()?.main;
+
+        (mainElement.querySelector('.comment-header .coda-popover-wrapper') as HTMLElement).style.display = 'none';
+        this.disableCommentBox();
+    }
+
     verifyAndStoreReviewer = () => {
         const [email, nickname, website] = Array.from(document.querySelectorAll('.coda-login-wrapper .basic-infos .info-item input')).map((el: any) => el.value);
 
@@ -144,6 +186,6 @@ export default class Reviewer {
         // 缓存用户数据
         storeReviewerInfos({ email: this.email, nickname: this.nickname, website: this.website });
         Message.success('已提交');
-        this.hideLoginWindow();
+        this.afterLogin();
     }
 }

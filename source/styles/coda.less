@@ -107,14 +107,31 @@
 
     .comment-content {
         width: 100%;
-        padding: 40px 15px 0;
+        padding: 50px 15px 0;
         box-sizing: border-box;
 
-        .comment-num {
+        .comment-header {
             color: @emphasize;
             font-size: 1.1rem;
             font-weight: 800;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+
+                img {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    margin-right: 5px;
+                    border: 1px solid @secondary-lighter;
+                }
+            }
         }
 
         .comment-list {
@@ -123,7 +140,7 @@
 
             .comment {
                 position: relative;
-                margin-bottom: 25px;
+                margin-bottom: 30px;
 
                 .comment-block {
                     position: relative;
@@ -207,6 +224,13 @@
                             pointer-events: none;
                             transition: opacity .35s ease-in;
 
+                            @media (any-hover: none) {
+                                & {
+                                    opacity: 1;
+                                    pointer-events: auto;
+                                }
+                            }
+
                             a {
                                 background-color: transparent;
                                 border: none;
@@ -227,7 +251,7 @@
                 }
 
                 .comment-box-placeholder {
-                    padding-top: 15px;
+                    padding-top: 20px;
                     margin-left: 65px;
                     width: calc(100% - 65px);
 
@@ -345,10 +369,12 @@
 
     &.hidden {
         animation: fadeOut .3s forwards ease-in;
+        pointer-events: none;
     }
 
     &.show {
         animation: fadeIn .3s forwards ease-in;
+        pointer-events: auto;
     }
 
     .close-button {
@@ -433,6 +459,41 @@
     }
 }
 
+.coda-popover-wrapper {
+    position: relative;
+
+    .popover-content {
+        display: flex;
+        align-items: center;
+        padding: 2px;
+    }
+}
+
+.user-profile-content {
+    img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .user-infos {
+        margin-left: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+
+        .email {
+            color: @emphasize;
+        }
+
+        .logout {
+            color: @secondary;
+            cursor: pointer;
+            font-size: .8rem;
+        }
+    }
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -463,21 +524,17 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        pointer-events: none;
     }
     to {
         opacity: 1;
-        pointer-events: auto;
     }
 }
 
 @keyframes fadeOut {
     from {
         opacity: 1;
-        pointer-events: auto;
     }
     to {
         opacity: 0;
-        pointer-events: none;
     }
 }

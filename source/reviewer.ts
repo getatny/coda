@@ -1,4 +1,5 @@
 import { ReviewerOptions } from './typings/reviewer';
+// eslint-disable-next-line import/no-cycle
 import { getCodaObjectFromWindow, removeReviewerInfos, storeReviewerInfos } from './utils/commons';
 import Message from './utils/message';
 import popover from './utils/popover';
@@ -92,6 +93,10 @@ export default class Reviewer {
                         <label for="website">网址</label>
                         <input type="text" id="website" placeholder="https://" />
                     </div>
+                    <div class="remember-check">
+                       <input type="checkbox" />
+                       记住基本信息
+                    </div>
                 </div>
                 <button class="login-button">提交</button>
             `;
@@ -174,7 +179,7 @@ export default class Reviewer {
             return;
         }
 
-        if (website !== '' && !/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(website)) {
+        if (website !== '' && !/(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?/.test(website)) {
             Message.error('请填写正确的网址');
             return;
         }
@@ -183,8 +188,17 @@ export default class Reviewer {
         this.nickname = nickname;
         this.website = website;
 
-        // 缓存用户数据
-        storeReviewerInfos({ email: this.email, nickname: this.nickname, website: this.website });
+        const remember = (document.querySelector('.coda-login-wrapper .basic-infos .remember-check input') as HTMLInputElement).checked;
+
+        if (remember) {
+            // 缓存用户数据
+            storeReviewerInfos({
+                email: this.email,
+                nickname: this.nickname,
+                website: this.website,
+            });
+        }
+
         Message.success('已提交');
         this.afterLogin();
     }

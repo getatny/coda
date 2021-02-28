@@ -1,5 +1,6 @@
-import Reviewer from '../reviewer';
 import Controller from '../controller';
+// eslint-disable-next-line import/no-cycle
+import Reviewer from '../reviewer';
 
 type CodaObj = {
     main: Element;

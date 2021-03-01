@@ -8,7 +8,9 @@ type CodaObj = {
     reviewer: Reviewer;
     configs: {
         [key: string]: string;
-    }
+    },
+    replyTo?: string;
+    commentId?: string;
 }
 
 type reviewerInfos = {

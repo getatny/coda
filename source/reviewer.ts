@@ -1,3 +1,4 @@
+import { escape } from 'html-escaper';
 import { ReviewerOptions } from './typings/reviewer';
 // eslint-disable-next-line import/no-cycle
 import { getCodaObjectFromWindow, removeReviewerInfos, storeReviewerInfos } from './utils/commons';
@@ -114,6 +115,11 @@ export default class Reviewer {
             if (!this.email && (['comment-box', 'operate-menus', 'tool-bar'].includes(target.parentNode.className) || target.className === 'reply-to')) {
                 Message.error('您需要填写基本信息才能评论');
                 this.showLoginWindow();
+                return;
+            }
+
+            if (this.email && target.className === 'submit-button') {
+                this.validateCommentAndSubmit();
             }
         });
 
@@ -138,6 +144,32 @@ export default class Reviewer {
                 (document.querySelector('.coda-login-wrapper .avatar img') as HTMLImageElement).src = `${avatarMirror}/${md5(this.email)}?d=${encodeURIComponent(defaultAvatar)}`;
             }
         });
+    }
+
+    validateCommentAndSubmit = () => {
+        const { main: mainElement, controller, commentId } = getCodaObjectFromWindow();
+        const commentBox: HTMLTextAreaElement = mainElement.querySelector('.comment-box textarea');
+        const comment = commentBox.value;
+
+        if (comment.trim() === '') {
+            Message.error('评论内容不能为空');
+        } else {
+            controller.submitComment({
+                commentContent: escape(comment),
+                email: this.email,
+                nickname: this.nickname,
+                website: this.website,
+                parentId: commentId,
+                notify: 1,
+            }).then((res) => {
+                if (res.success) {
+                    Message.success('发布成功');
+                    commentBox.value = '';
+                }
+            }).catch(() => {
+                Message.error('发布失败');
+            });
+        }
     }
 
     showLoginWindow = () => {

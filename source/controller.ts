@@ -32,4 +32,11 @@ export default class Controller {
     }
 
     getComments = (email: string) => http.get(`${this.serviceUrl}/rest/public/comments/${this.key}/${this.currentPage}/${this.pageSize}${email ? `?email=${email}` : ''}`)
+
+    submitComment = (data) => http.post(`${this.serviceUrl}/rest/public/comment/create`, {
+        key: this.key,
+        title: this.title,
+        url: this.url,
+        ...data,
+    })
 }

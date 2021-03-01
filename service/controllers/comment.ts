@@ -52,4 +52,67 @@ export default {
 
         return next();
     },
+
+    createComment: async (ctx, next) => {
+        const {
+            key,
+            commentContent,
+            email,
+            nickname,
+            website,
+            parentId,
+            title,
+            url,
+            notify,
+        } = ctx.request.body;
+
+        await errorResolver(async () => {
+            // find or create related post
+            const [post] = await db.findOrCreatePost(key, title, url);
+            const trustedUser = await db.findUserByEmail(email);
+
+            let comment;
+
+            if (trustedUser) {
+                comment = await db.createComment({
+                    postId: post.id,
+                    commentContent,
+                    email,
+                    nickname,
+                    website,
+                    parentId,
+                    notify,
+                    status: 1,
+                });
+            } else {
+                comment = await db.createComment({
+                    postId: post.id,
+                    commentContent,
+                    email,
+                    nickname,
+                    website,
+                    parentId,
+                    notify,
+                });
+            }
+
+            // send notify email to user if needNotify is true
+            // if (needNotify) {
+            //     const originComment = await dbController.getComment(parentId);
+            //     if (email !== originComment.email) { // if 2 user have the same email address, then just ignore it.
+            //         await mailer.sendEmail(originComment.email, {
+            //             nickname: originComment.nickname,
+            //             commentedBy: nickname,
+            //             comment: commentContent,
+            //             originComment: originComment.comment,
+            //             url,
+            //         });
+            //     }
+            // }
+
+            ctx.send(comment);
+        }, ctx);
+
+        return next();
+    },
 };

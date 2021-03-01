@@ -44,4 +44,28 @@ export default {
     }),
 
     countComments: (where) => CodaComment.count({ where, paranoid: true }),
+
+    createComment({
+        postId,
+        commentContent,
+        email,
+        nickname,
+        website = null,
+        parentId = null,
+        notify,
+        status = 0,
+    }: {
+        postId: string;
+        commentContent: string;
+        email: string;
+        nickname: string;
+        website?: string;
+        parentId?: string;
+        notify: boolean;
+        status?: -1 | 0 | 1
+    }) {
+        return CodaComment.create({
+            postId, email, nickname, website, parentId, content: commentContent, notify, status,
+        });
+    },
 };
